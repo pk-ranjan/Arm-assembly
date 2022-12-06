@@ -1,0 +1,41 @@
+// program to add numbers separated by semicolons of the given string 
+
+.data   // data section of program
+input: .asciz "11;263;20" 
+
+.text   // text section of program
+.global main
+
+main:  
+	mov r0, #0    @ will hold the final sum value
+	ldr r1, Adr_input
+	mov r3, #0    @ will hold the current value
+	
+loop: 
+	ldrb r2, [r1], #1
+	cmp r2, #';'
+	beq add
+	cmp r2, #0
+	beq end
+	// check if char is a digit
+	cmp r2, #'0'
+	blt loop
+	cmp r2, #'9'
+	bgt loop
+	sub r2, #'0'
+	lsl r4, r3, #1             @ n = (n*10) + new_digit
+	add r3, r4, r3, lsl #3     @ (n*10) = (n*8) + (n*2) => lsl #1 and lsl #3
+	add r3, r3, r2
+	b loop
+	
+add: 
+	add r0, r0, r3
+	mov r3, #0
+	b loop
+end: 
+	cmp r3 , #0
+	addne r0, r0, r3
+	bx lr
+	
+Adr_input: .word input
+	
